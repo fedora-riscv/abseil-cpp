@@ -6,7 +6,7 @@
 
 Name:           abseil-cpp
 Version:        20210324.2
-Release:        4%{?dist}
+Release:        5%{?dist}
 Summary:        C++ Common Libraries
 
 License:        ASL 2.0
@@ -17,12 +17,20 @@ Source0:        https://github.com/abseil/abseil-cpp/archive/%{version}/%{name}-
 # abseil-cpp expects the targets to be created by a bundled copy of gtest/gmock.
 # This patch replicates those targets via find_library and imported targets.
 # Not submitted upstream.
-Patch1:         abseil-cpp-20210324-gtest.patch
+Patch:          abseil-cpp-20210324-gtest.patch
 
 # Disable CPU frequency detection on armv7hl architectures.
 # Makes test consistent with aarch64 CPUs.
 # Not submitted upstream.
-Patch2:         abseil-cpp-20210324.2-armv7.patch
+Patch:          abseil-cpp-20210324.2-armv7.patch
+# Backport upstream commit 09e96049995584c3489e4bd1467313e3e85af99c, which
+# corresponds to:
+#
+# Do not leak -maes -msse4.1 into pkgconfig
+# https://github.com/abseil/abseil-cpp/pull/1216
+#
+# Fixes RHBZ#2108658.
+Patch:          https://github.com/abseil/abseil-cpp/commit/09e96049995584c3489e4bd1467313e3e85af99c.patch
 
 BuildRequires:  cmake
 BuildRequires:  gcc-c++
@@ -88,6 +96,9 @@ Development headers for %{name}
 %{_libdir}/pkgconfig/*.pc
 
 %changelog
+* Fri Jul 29 2022 Benjamin A. Beasley <code@musicinmybrain.net> - 20210324.2-5
+- Do not leak -maes -msse4.1 into pkgconfig (fix RHBZ#2108658)
+
 * Mon Jan 31 2022 Benjamin A. Beasley <code@musicinmybrain.net> - 20210324.2-4
 - Fix test failure (fix RHBZ#2045186)
 
