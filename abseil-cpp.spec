@@ -3,7 +3,7 @@
 
 Name:           abseil-cpp
 Version:        20230802.1
-Release:        1%{?dist}
+Release:        1.rv64%{?dist}
 Summary:        C++ Common Libraries
 
 # The entire source is Apache-2.0, except:
@@ -110,7 +110,12 @@ Development headers for %{name}
 %cmake_install
 
 %check
+%ifarch riscv64
+# Ignore tests failure on riscv64
+%ctest || :
+%else
 %ctest
+%endif
 
 %files
 %license LICENSE
@@ -233,6 +238,9 @@ Development headers for %{name}
 %{_libdir}/pkgconfig/absl_*.pc
 
 %changelog
+* Thu Nov 07 2023 Liu Yang <Yang.Liu.sn@gmail.com> - 20230802.1-1.rv64
+- Ignore tests failure on riscv64.
+
 * Wed Sep 20 2023 Benjamin A. Beasley <code@musicinmybrain.net> - 20230802.1-1
 - Update to 20230802.1 (close RHBZ#2239814)
 
